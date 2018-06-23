@@ -3,6 +3,7 @@ package it.nicolagiacchetta.betfair;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.nicolagiacchetta.betfair.entities.LoginResponse;
 import it.nicolagiacchetta.betfair.exceptions.RequestFailedException;
+import it.nicolagiacchetta.betfair.utils.ApacheComponentsHttpClient;
 import it.nicolagiacchetta.betfair.utils.HttpClient;
 import it.nicolagiacchetta.betfair.utils.HttpResponse;
 import it.nicolagiacchetta.betfair.utils.HttpUtils;
@@ -23,7 +24,7 @@ public class BetfairClient {
     private HttpClient httpClient;
     private ObjectMapper objectMapper;
 
-    public BetfairClient(HttpClient httpClient, ObjectMapper objectMapper) {
+    private BetfairClient(HttpClient httpClient, ObjectMapper objectMapper) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
     }
@@ -63,5 +64,29 @@ public class BetfairClient {
             throw new RequestFailedException("Request failed. Returned status code " + httpResponse.getStatusCode());
         }
         return objectMapper.readValue(httpResponse.getContent(), clazz);
+    }
+
+    public static class Builder {
+
+        private HttpClient httpClient;
+        private ObjectMapper objectMapper;
+
+        public Builder withHttpClient(HttpClient httpClient) {
+            this.httpClient = httpClient;
+            return this;
+        }
+
+        public Builder withObjectMapper(ObjectMapper objectMapper) {
+            this.objectMapper = objectMapper;
+            return this;
+        }
+
+        public BetfairClient build() {
+            if(this.httpClient == null)
+                this.httpClient = ApacheComponentsHttpClient.newInstance();
+            if(this.objectMapper == null)
+                this.objectMapper = new ObjectMapper();
+            return new BetfairClient(this.httpClient, this.objectMapper);
+        }
     }
 }

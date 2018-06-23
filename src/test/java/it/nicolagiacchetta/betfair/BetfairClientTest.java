@@ -28,8 +28,9 @@ public class BetfairClientTest {
     public static final String SESSION_TOKEN = "+THAUrwK+pcW736SAaKBML9HPio3+W7hvf3S0y/5rwE=";
 
     private HttpClient httpClient = mock(HttpClient.class);
-    private ObjectMapper objectMapper = new ObjectMapper();
-    private BetfairClient betfairClient = new BetfairClient(httpClient, objectMapper);
+    private BetfairClient betfairClient = new BetfairClient.Builder()
+                                                           .withHttpClient(httpClient)
+                                                           .build();
 
     @Test
     public void login() throws Exception {

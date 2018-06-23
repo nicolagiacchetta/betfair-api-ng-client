@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 group 'it.nicolagiacchetta.betfair'
-version = '0.0.1-SNAPSHOT'
+version = dateText();
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -31,4 +31,25 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile "org.mockito:mockito-core:$versionMockitoCore"
+}
+
+task publish(type: Copy) {
+    from(libsDir)
+    into("./")
+}
+
+jar {
+    from sourceSets.main.allSource
+    manifest {
+        attributes('Implementation-Title': project.name,
+                   'Implementation-Version': project.version)
+    }
+    archiveName = project.version + '+betfair-api-ng-client.jar'
+}
+
+
+def dateText() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMdd.HHmmss')
+    return formattedDate
 }
