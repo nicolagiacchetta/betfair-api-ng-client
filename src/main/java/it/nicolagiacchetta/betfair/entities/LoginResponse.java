@@ -10,7 +10,6 @@ public class LoginResponse {
     @JsonProperty
     private String product;
 
-
     @JsonProperty
     private LoginStatus status;
 
