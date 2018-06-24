@@ -8,15 +8,18 @@ import it.nicolagiacchetta.betfair.utils.HttpClient;
 import it.nicolagiacchetta.betfair.utils.HttpResponse;
 import it.nicolagiacchetta.betfair.utils.HttpUtils;
 
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static it.nicolagiacchetta.betfair.utils.BetfairUtils.defaultHeaders;
+
 public class BetfairClient {
 
+    public static final String BETTING_API_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";
     public static final String IDENTITY_SSO_URL = "https://identitysso.betfair.com/api";
     public static final String LOGIN_URL = IDENTITY_SSO_URL + "/login";
+    public static final String LOGOUT_URL = IDENTITY_SSO_URL + "/logout";
     public static final String SESSION_KEEPALIVE_URL = IDENTITY_SSO_URL + "/keepAlive";
     public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";
@@ -34,29 +37,25 @@ public class BetfairClient {
         queryParams.put(USERNAME_PARAM, username);
         queryParams.put(PASSWORD_PARAM, password);
         String uri = HttpUtils.appendQueryString(LOGIN_URL, queryParams);
-        Map<String, String> headers = defaultHeaders(appKey);
-        HttpResponse response = this.httpClient.post(uri, headers);
-        return parseHttpResponseOrFail(response, LoginResponse.class);
+        return sendSessionManagementRequest(appKey, uri);
     }
 
     public LoginResponse keepAliveSession(String appKey, String sessionToken) throws Exception {
+        return sendSessionManagementRequest(appKey, sessionToken, SESSION_KEEPALIVE_URL);
+    }
+
+    public LoginResponse logout(String appKey, String sessionToken) throws Exception {
+        return sendSessionManagementRequest(appKey, sessionToken, LOGOUT_URL);
+    }
+
+    private LoginResponse sendSessionManagementRequest(String appKey, String url) throws Exception {
+        return sendSessionManagementRequest(appKey, null, url);
+    }
+
+    private LoginResponse sendSessionManagementRequest(String appKey, String sessionToken, String url) throws Exception {
         Map<String, String> headers = defaultHeaders(appKey, sessionToken);
-        HttpResponse response = this.httpClient.post(SESSION_KEEPALIVE_URL, headers);
+        HttpResponse response = this.httpClient.post(url, headers);
         return parseHttpResponseOrFail(response, LoginResponse.class);
-    }
-
-    private static Map<String, String> defaultHeaders(String appKey) {
-        return defaultHeaders(appKey, null);
-    }
-
-    private static Map<String, String> defaultHeaders(String appKey, String sessionToken) {
-        Map<String, String> defaultHeaders = new HashMap<>();
-        defaultHeaders.put("X-Application", appKey);
-        if(sessionToken != null) {
-            defaultHeaders.put("X-Authentication", sessionToken);
-        }
-        defaultHeaders.put("Accept", MediaType.APPLICATION_JSON);
-        return defaultHeaders;
     }
 
     private <R> R parseHttpResponseOrFail(HttpResponse httpResponse, Class<R> clazz) throws RequestFailedException, IOException {

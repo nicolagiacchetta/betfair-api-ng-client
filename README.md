@@ -1,5 +1,5 @@
-# Betfair API-NG Java Client
-A Java Client to help the implementation of applications and bot that interact with the Betfair Exchange API-NG described [here](http://docs.developer.betfair.com/docs/).
+# Betfair Exchange API-NG Java Client
+A Java Client to help the implementation of applications and bots that interact with the Betfair Exchange API-NG described [here](http://docs.developer.betfair.com/docs/).
 
 ## Getting started
 To generate and publish in the project directory the jar of the library run the `jar` and `publish` gradle tasks.
@@ -7,7 +7,6 @@ To generate and publish in the project directory the jar of the library run the 
 
 ```
 ./gradlew clean jar publish
-
 ```
 
 A `build.sh` script is also provided.
@@ -18,7 +17,6 @@ The `BetfairClient` class provides an inner `BetfairClient.Builder` that represe
 ```Java
 BetfairClient betfairClient = new BetfairClient.Builder()
                                                .build();
-
 ```
 
 
