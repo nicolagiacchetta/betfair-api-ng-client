@@ -2,7 +2,7 @@
 A Java Client to help the implementation of applications and bots that interact with the Betfair Exchange API-NG described [here](http://docs.developer.betfair.com/docs/).
 
 ## Getting started
-###Building from Source
+### Building from Source
 To generate and publish in the project directory the jar of the library, run the `jar` and `publish` gradle tasks.
 
 
