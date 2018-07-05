@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class HttpUtils {
 
+    private HttpUtils() {}
+
     public static String appendQueryString(String uri, Map<String, String> queryParams) throws URISyntaxException {
         if(uri == null || uri.isEmpty() || queryParams == null || queryParams.isEmpty())
             return uri;

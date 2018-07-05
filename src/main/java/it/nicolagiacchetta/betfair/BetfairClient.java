@@ -1,7 +1,10 @@
 package it.nicolagiacchetta.betfair;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.nicolagiacchetta.betfair.entities.EventResult;
+import it.nicolagiacchetta.betfair.entities.Filter;
 import it.nicolagiacchetta.betfair.entities.LoginResponse;
+import it.nicolagiacchetta.betfair.entities.RequestBody;
 import it.nicolagiacchetta.betfair.exceptions.RequestFailedException;
 import it.nicolagiacchetta.betfair.utils.ApacheComponentsHttpClient;
 import it.nicolagiacchetta.betfair.utils.HttpClient;
@@ -16,13 +19,17 @@ import static it.nicolagiacchetta.betfair.utils.BetfairUtils.defaultHeaders;
 
 public class BetfairClient {
 
-    public static final String BETTING_API_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";
+    // Login & Session Management
     public static final String IDENTITY_SSO_URL = "https://identitysso.betfair.com/api";
     public static final String LOGIN_URL = IDENTITY_SSO_URL + "/login";
     public static final String LOGOUT_URL = IDENTITY_SSO_URL + "/logout";
     public static final String SESSION_KEEPALIVE_URL = IDENTITY_SSO_URL + "/keepAlive";
     public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";
+
+    // Betting
+    public static final String BETTING_API_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";
+    public static final String LIST_EVENTS_URL = BETTING_API_URL + "/listEvents/";
 
     private HttpClient httpClient;
     private ObjectMapper objectMapper;
@@ -56,6 +63,16 @@ public class BetfairClient {
         Map<String, String> headers = defaultHeaders(appKey, sessionToken);
         HttpResponse response = this.httpClient.post(url, headers);
         return parseHttpResponseOrFail(response, LoginResponse.class);
+    }
+
+    public EventResult[] listEvents(String appKey, String sessionToken, Filter filter) throws Exception {
+        if(filter == null)
+            throw new IllegalArgumentException("Invalid filter argument: null value not allowed");
+        Map<String, String> headers = defaultHeaders(appKey, sessionToken);
+        RequestBody body = new RequestBody.Builder(filter).build();
+        String jsonBody = objectMapper.writeValueAsString(body);
+        HttpResponse response = this.httpClient.post(LIST_EVENTS_URL, headers, jsonBody);
+        return parseHttpResponseOrFail(response, EventResult[].class);
     }
 
     private <R> R parseHttpResponseOrFail(HttpResponse httpResponse, Class<R> clazz) throws RequestFailedException, IOException {

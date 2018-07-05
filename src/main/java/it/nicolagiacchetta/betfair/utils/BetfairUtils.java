@@ -6,6 +6,8 @@ import java.util.Map;
 
 public class BetfairUtils {
 
+    private BetfairUtils() {}
+
     public static Map<String, String> defaultHeaders(String appKey) {
         return defaultHeaders(appKey, null);
     }
@@ -16,6 +18,7 @@ public class BetfairUtils {
         if(sessionToken != null)
             defaultHeaders.put("X-Authentication", sessionToken);
         defaultHeaders.put("Accept", MediaType.APPLICATION_JSON);
+        defaultHeaders.put("Content-Type", MediaType.APPLICATION_JSON);
         return defaultHeaders;
     }
 }

@@ -19,9 +19,19 @@ The `BetfairClient` class provides an inner `BetfairClient.Builder` that represe
 BetfairClient betfairClient = new BetfairClient.Builder().build();
 ```
 
+### Examples
+Some examples showing how to use the `BetfairClient` can be found [here](/src/main/java/it/nicolagiacchetta/betfair/Examples.java).
+
+To run the examples, substitute the values of following variables defined at the top of the `main` method with your real Betfair credentials: 
+```Java
+String username = "YOUR_BETFAIR_USERNAME";
+String password = "YOUR_BETFAIR_PASSWORD";
+String appKey = "YOUR_BETFAIR_APPKEY";
+```
+
 ## Supported APIs 
 The project currently supports the following operations:
 
 * Login & Session Management described [here](http://docs.developer.betfair.com/docs/pages/viewpage.action?pageId=3834909#Login&SessionManagement-Logout)
-
+* List Events (`exchange/betting/rest/v1.0/listEvents/`)
 

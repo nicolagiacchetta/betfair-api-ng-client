@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 
 public class StringUtils {
 
+    private StringUtils() {}
+
     public static String toString(InputStream inputStream) throws IOException {
         return toString(inputStream, StandardCharsets.UTF_8.name());
     }
