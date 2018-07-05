@@ -26,11 +26,10 @@ public class Examples {
 
         // Login and obtain a session token
         LoginResponse loginResponse = betfairClient.login(username, password, appKey);
-        String sessionToken = loginResponse.getToken();
 
 
         // Refresh the Session Token
-        betfairClient.keepAliveSession(appKey, sessionToken);
+        betfairClient.keepAliveSession();
 
 
         // List all the events of the event type id '1' happening in the next 24 hours
@@ -38,7 +37,7 @@ public class Examples {
                                             .withMarketStartTime(new MarketStartTime(now, tomorrow))
                                             .build();
 
-        EventResult[] events = betfairClient.listEvents(appKey, sessionToken, filter);
+        EventResult[] events = betfairClient.listEvents(filter);
 
     }
 

@@ -19,6 +19,9 @@ import static it.nicolagiacchetta.betfair.utils.BetfairUtils.defaultHeaders;
 
 public class BetfairClient {
 
+    private String loginAppKey;
+    private String loginSessionToken;
+
     // Login & Session Management
     public static final String IDENTITY_SSO_URL = "https://identitysso.betfair.com/api";
     public static final String LOGIN_URL = IDENTITY_SSO_URL + "/login";
@@ -45,7 +48,14 @@ public class BetfairClient {
         queryParams.put(USERNAME_PARAM, username);
         queryParams.put(PASSWORD_PARAM, password);
         String uri = HttpUtils.appendQueryString(LOGIN_URL, queryParams);
-        return sendSessionManagementRequest(appKey, uri);
+        LoginResponse loginResponse = sendSessionManagementRequest(appKey, uri);
+        this.loginAppKey = appKey;
+        this.loginSessionToken = loginResponse.getToken();
+        return loginResponse;
+    }
+
+    public LoginResponse keepAliveSession() throws Exception {
+        return keepAliveSession(this.loginAppKey, this.loginSessionToken);
     }
 
     public LoginResponse keepAliveSession(String appKey, String sessionToken) throws Exception {
@@ -55,7 +65,10 @@ public class BetfairClient {
 
     public LoginResponse logout(String appKey, String sessionToken) throws Exception {
         checkArgumentsNonNull(appKey, sessionToken);
-        return sendSessionManagementRequest(appKey, sessionToken, LOGOUT_URL);
+        LoginResponse loginResponse = sendSessionManagementRequest(appKey, sessionToken, LOGOUT_URL);
+        this.loginAppKey = null;
+        this.loginSessionToken = null;
+        return loginResponse;
     }
 
     private LoginResponse sendSessionManagementRequest(String appKey, String url) throws Exception {
@@ -66,6 +79,15 @@ public class BetfairClient {
         Map<String, String> headers = defaultHeaders(appKey, sessionToken);
         HttpResponse response = this.httpClient.post(url, headers);
         return parseHttpResponseOrFail(response, LoginResponse.class);
+    }
+
+    public EventResult[] listEvents(Filter filter) throws Exception {
+        checkArgumentsNonNull(this.loginAppKey, this.loginSessionToken, filter);
+        Map<String, String> headers = defaultHeaders(this.loginAppKey, this.loginSessionToken);
+        RequestBody body = new RequestBody.Builder(filter).build();
+        String jsonBody = objectMapper.writeValueAsString(body);
+        HttpResponse response = this.httpClient.post(LIST_EVENTS_URL, headers, jsonBody);
+        return parseHttpResponseOrFail(response, EventResult[].class);
     }
 
     public EventResult[] listEvents(String appKey, String sessionToken, Filter filter) throws Exception {
