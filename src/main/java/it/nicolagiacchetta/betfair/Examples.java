@@ -39,6 +39,9 @@ public class Examples {
 
         EventResult[] events = betfairClient.listEvents(filter);
 
+
+        // Logout
+        betfairClient.logout();
     }
 
 }

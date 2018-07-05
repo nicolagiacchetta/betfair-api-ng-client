@@ -63,6 +63,10 @@ public class BetfairClient {
         return sendSessionManagementRequest(appKey, sessionToken, SESSION_KEEPALIVE_URL);
     }
 
+    public LoginResponse logout() throws Exception {
+        return logout(this.loginAppKey, this.loginSessionToken);
+    }
+
     public LoginResponse logout(String appKey, String sessionToken) throws Exception {
         checkArgumentsNonNull(appKey, sessionToken);
         LoginResponse loginResponse = sendSessionManagementRequest(appKey, sessionToken, LOGOUT_URL);
