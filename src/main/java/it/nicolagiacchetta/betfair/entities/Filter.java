@@ -16,12 +16,17 @@ public class Filter {
 
     @JsonProperty
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private int[] competitionIds;
+
+    @JsonProperty
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private MarketStartTime marketStartTime;
 
     private Filter(Builder builder) {
         this.textQuery = builder.textQuery;
         this.eventTypeIds = builder.eventTypeIds;
         this.marketStartTime = builder.marketStartTime;
+        this.competitionIds = builder.competitionIds;
     }
 
     public String getTextQuery() {
@@ -32,11 +37,21 @@ public class Filter {
         return eventTypeIds;
     }
 
+    public int[] getCompetitionIds() {
+        return competitionIds;
+    }
+
+    public MarketStartTime getMarketStartTime() {
+        return marketStartTime;
+    }
+
     public static class Builder {
 
         private String textQuery;
 
         private int[] eventTypeIds;
+
+        private int[] competitionIds;
 
         private MarketStartTime marketStartTime;
 
@@ -52,6 +67,10 @@ public class Filter {
             return this;
         }
 
+        public Builder withCompetitionIds(int[] competitionIds) {
+            this.competitionIds = competitionIds;
+            return this;
+        }
 
         public Builder withMarketStartTime(MarketStartTime marketStartTime) {
             this.marketStartTime = marketStartTime;
