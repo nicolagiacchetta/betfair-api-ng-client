@@ -40,6 +40,7 @@ public class BetfairClient {
     }
 
     public LoginResponse login(String username, String password, String appKey) throws Exception {
+        checkArgumentsNonNull(username, password, appKey);
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put(USERNAME_PARAM, username);
         queryParams.put(PASSWORD_PARAM, password);
@@ -48,10 +49,12 @@ public class BetfairClient {
     }
 
     public LoginResponse keepAliveSession(String appKey, String sessionToken) throws Exception {
+        checkArgumentsNonNull(appKey, sessionToken);
         return sendSessionManagementRequest(appKey, sessionToken, SESSION_KEEPALIVE_URL);
     }
 
     public LoginResponse logout(String appKey, String sessionToken) throws Exception {
+        checkArgumentsNonNull(appKey, sessionToken);
         return sendSessionManagementRequest(appKey, sessionToken, LOGOUT_URL);
     }
 
@@ -66,13 +69,18 @@ public class BetfairClient {
     }
 
     public EventResult[] listEvents(String appKey, String sessionToken, Filter filter) throws Exception {
-        if(filter == null)
-            throw new IllegalArgumentException("Invalid filter argument: null value not allowed");
+        checkArgumentsNonNull(appKey, sessionToken, filter);
         Map<String, String> headers = defaultHeaders(appKey, sessionToken);
         RequestBody body = new RequestBody.Builder(filter).build();
         String jsonBody = objectMapper.writeValueAsString(body);
         HttpResponse response = this.httpClient.post(LIST_EVENTS_URL, headers, jsonBody);
         return parseHttpResponseOrFail(response, EventResult[].class);
+    }
+
+    private void checkArgumentsNonNull(Object... args){
+        for(Object arg : args)
+            if(arg == null)
+                throw new IllegalArgumentException("Invalid argument: null value not allowed");
     }
 
     private <R> R parseHttpResponseOrFail(HttpResponse httpResponse, Class<R> clazz) throws RequestFailedException, IOException {

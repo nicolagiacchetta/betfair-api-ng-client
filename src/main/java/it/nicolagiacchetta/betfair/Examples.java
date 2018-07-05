@@ -1,6 +1,5 @@
 package it.nicolagiacchetta.betfair;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import it.nicolagiacchetta.betfair.entities.EventResult;
 import it.nicolagiacchetta.betfair.entities.Filter;
 import it.nicolagiacchetta.betfair.entities.LoginResponse;
