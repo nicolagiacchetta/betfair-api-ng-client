@@ -110,8 +110,9 @@ public class BetfairClient {
     }
 
     private <R> R parseHttpResponseOrFail(HttpResponse httpResponse, Class<R> clazz) throws RequestFailedException, IOException {
-        if(httpResponse.getStatusCode() != 200) {
-            throw new RequestFailedException("Request failed. Returned status code " + httpResponse.getStatusCode());
+        int statusCode = httpResponse.getStatusCode();
+        if(statusCode != 200) {
+            throw new RequestFailedException("Request failed. Returned status code " + statusCode, statusCode);
         }
         return objectMapper.readValue(httpResponse.getContent(), clazz);
     }
