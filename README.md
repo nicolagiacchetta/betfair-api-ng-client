@@ -19,6 +19,8 @@ The `BetfairClient` class provides an inner `BetfairClient.Builder` that represe
 BetfairClient betfairClient = new BetfairClient.Builder().build();
 ```
 
+It is possible but highly discouraged to provide via the `BetfairClient.Builder` a custom implementation of the `it.nicolagiacchetta.betfair.utils.HttpClient` and a `com.fasterxml.jackson.databind.ObjectMapper`. In particular before reusing your application `com.fasterxml.jackson.databind.ObjectMapper`, be sure that its custom configuration does not break the compatibility with the JSON format expected by the Betfair Exchange API-NG.   
+
 ### Examples
 Some examples showing how to use the `BetfairClient` can be found [here](/src/main/java/it/nicolagiacchetta/betfair/Examples.java).
 
