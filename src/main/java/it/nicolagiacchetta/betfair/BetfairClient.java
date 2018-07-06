@@ -19,9 +19,6 @@ import static it.nicolagiacchetta.betfair.utils.BetfairUtils.defaultHeaders;
 
 public class BetfairClient {
 
-    private String loginAppKey;
-    private String loginSessionToken;
-
     // Login & Session Management
     public static final String IDENTITY_SSO_URL = "https://identitysso.betfair.com/api";
     public static final String LOGIN_URL = IDENTITY_SSO_URL + "/login";
@@ -37,6 +34,8 @@ public class BetfairClient {
     private HttpClient httpClient;
     private ObjectMapper objectMapper;
 
+    private LoginSession loginSession;
+
     private BetfairClient(HttpClient httpClient, ObjectMapper objectMapper) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
@@ -49,13 +48,13 @@ public class BetfairClient {
         queryParams.put(PASSWORD_PARAM, password);
         String uri = HttpUtils.appendQueryString(LOGIN_URL, queryParams);
         LoginResponse loginResponse = sendSessionManagementRequest(appKey, uri);
-        this.loginAppKey = appKey;
-        this.loginSessionToken = loginResponse.getToken();
+        this.loginSession = new LoginSession(appKey, loginResponse.getToken());
         return loginResponse;
     }
 
     public LoginResponse keepAliveSession() throws Exception {
-        return keepAliveSession(this.loginAppKey, this.loginSessionToken);
+        checkActiveLoginSession();
+        return keepAliveSession(this.loginSession.appKey, this.loginSession.sessionToken);
     }
 
     public LoginResponse keepAliveSession(String appKey, String sessionToken) throws Exception {
@@ -64,14 +63,14 @@ public class BetfairClient {
     }
 
     public LoginResponse logout() throws Exception {
-        return logout(this.loginAppKey, this.loginSessionToken);
+        checkActiveLoginSession();
+        return logout(this.loginSession.appKey, this.loginSession.sessionToken);
     }
 
     public LoginResponse logout(String appKey, String sessionToken) throws Exception {
         checkArgumentsNonNull(appKey, sessionToken);
         LoginResponse loginResponse = sendSessionManagementRequest(appKey, sessionToken, LOGOUT_URL);
-        this.loginAppKey = null;
-        this.loginSessionToken = null;
+        this.loginSession = null;
         return loginResponse;
     }
 
@@ -86,12 +85,8 @@ public class BetfairClient {
     }
 
     public EventResult[] listEvents(Filter filter) throws Exception {
-        checkArgumentsNonNull(this.loginAppKey, this.loginSessionToken, filter);
-        Map<String, String> headers = defaultHeaders(this.loginAppKey, this.loginSessionToken);
-        RequestBody body = new RequestBody.Builder(filter).build();
-        String jsonBody = objectMapper.writeValueAsString(body);
-        HttpResponse response = this.httpClient.post(LIST_EVENTS_URL, headers, jsonBody);
-        return parseHttpResponseOrFail(response, EventResult[].class);
+        checkActiveLoginSession();
+        return listEvents(this.loginSession.appKey, this.loginSession.sessionToken, filter);
     }
 
     public EventResult[] listEvents(String appKey, String sessionToken, Filter filter) throws Exception {
@@ -101,6 +96,11 @@ public class BetfairClient {
         String jsonBody = objectMapper.writeValueAsString(body);
         HttpResponse response = this.httpClient.post(LIST_EVENTS_URL, headers, jsonBody);
         return parseHttpResponseOrFail(response, EventResult[].class);
+    }
+
+    private void checkActiveLoginSession(){
+        if(this.loginSession == null)
+            throw new IllegalStateException("No active login session found");
     }
 
     private void checkArgumentsNonNull(Object... args){
@@ -137,6 +137,17 @@ public class BetfairClient {
             if(this.objectMapper == null)
                 this.objectMapper = new ObjectMapper();
             return new BetfairClient(this.httpClient, this.objectMapper);
+        }
+    }
+
+    private static class LoginSession {
+
+        private final String appKey;
+        private final String sessionToken;
+
+        private LoginSession(String appKey, String sessionToken) {
+            this.appKey = appKey;
+            this.sessionToken = sessionToken;
         }
     }
 }
