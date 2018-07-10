@@ -40,8 +40,8 @@ public class BetfairClient implements AutoCloseable {
     private final ObjectMapper objectMapper;
 
     private BetfairClient(Builder builder) {
-        this.httpClient = Objects.requireNonNull(builder.httpClient);
-        this.objectMapper = Objects.requireNonNull(builder.objectMapper);
+        this.httpClient = Objects.requireNonNull(builder.httpClient, "HttpClient cannot be null");
+        this.objectMapper = Objects.requireNonNull(builder.objectMapper, "ObjectMapper cannot be null");
     }
 
     public LoginResponse login(String username, String password, String appKey) throws Exception {
@@ -101,6 +101,10 @@ public class BetfairClient implements AutoCloseable {
     @Override
     public void close() throws Exception {
         if(this.httpClient != null) this.httpClient.close();
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder {

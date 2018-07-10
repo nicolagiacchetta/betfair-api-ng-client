@@ -16,7 +16,7 @@ A `build.sh` script is also provided.
 The `BetfairClient` class provides an inner `BetfairClient.Builder` that represents the only way to build an instance of the `BetfairClient`.
 
 ```Java
-BetfairClient betfairClient = new BetfairClient.Builder().build();
+BetfairClient betfairClient = BetfairClient.builder().build();
 ```
 
 Building an instance of the `BetfairClient` in this way will imply the creation of a `it.nicolagiacchetta.betfair.utils.HttpClient` and of a `com.fasterxml.jackson.databind.ObjectMapper`. For this reason, it is recommended that the same instance of the `BetfairClient` is reused for multiple request executions. It is also possible but highly discouraged to provide via the `BetfairClient.Builder` a custom implementation of the `it.nicolagiacchetta.betfair.utils.HttpClient` and a `com.fasterxml.jackson.databind.ObjectMapper`. In particular before reusing your application `com.fasterxml.jackson.databind.ObjectMapper`, be sure that its custom configuration does not break the compatibility with the JSON format expected by the Betfair Exchange API-NG. 

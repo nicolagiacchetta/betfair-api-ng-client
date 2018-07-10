@@ -21,7 +21,7 @@ public class Examples {
 
 
         // Build the BetfairClient
-        try(BetfairClient betfairClient = new BetfairClient.Builder().build()) {
+        try(BetfairClient betfairClient = BetfairClient.builder().build()) {
 
 
             // Login and obtain a session token
