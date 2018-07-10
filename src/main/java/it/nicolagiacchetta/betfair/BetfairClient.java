@@ -10,14 +10,19 @@ import it.nicolagiacchetta.betfair.utils.ApacheComponentsHttpClient;
 import it.nicolagiacchetta.betfair.utils.HttpClient;
 import it.nicolagiacchetta.betfair.utils.HttpResponse;
 import it.nicolagiacchetta.betfair.utils.HttpUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static it.nicolagiacchetta.betfair.utils.BetfairUtils.defaultHeaders;
 
-public class BetfairClient {
+public class BetfairClient implements AutoCloseable {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(BetfairClient.class);
 
     // Login & Session Management
     public static final String IDENTITY_SSO_URL = "https://identitysso.betfair.com/api";
@@ -31,14 +36,12 @@ public class BetfairClient {
     public static final String BETTING_API_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";
     public static final String LIST_EVENTS_URL = BETTING_API_URL + "/listEvents/";
 
-    private HttpClient httpClient;
-    private ObjectMapper objectMapper;
+    private final HttpClient httpClient;
+    private final ObjectMapper objectMapper;
 
-    private LoginSession loginSession;
-
-    private BetfairClient(HttpClient httpClient, ObjectMapper objectMapper) {
-        this.httpClient = httpClient;
-        this.objectMapper = objectMapper;
+    private BetfairClient(Builder builder) {
+        this.httpClient = Objects.requireNonNull(builder.httpClient);
+        this.objectMapper = Objects.requireNonNull(builder.objectMapper);
     }
 
     public LoginResponse login(String username, String password, String appKey) throws Exception {
@@ -48,13 +51,7 @@ public class BetfairClient {
         queryParams.put(PASSWORD_PARAM, password);
         String uri = HttpUtils.appendQueryString(LOGIN_URL, queryParams);
         LoginResponse loginResponse = sendSessionManagementRequest(appKey, uri);
-        this.loginSession = new LoginSession(appKey, loginResponse.getToken());
         return loginResponse;
-    }
-
-    public LoginResponse keepAliveSession() throws Exception {
-        checkActiveLoginSession();
-        return keepAliveSession(this.loginSession.appKey, this.loginSession.sessionToken);
     }
 
     public LoginResponse keepAliveSession(String appKey, String sessionToken) throws Exception {
@@ -62,15 +59,9 @@ public class BetfairClient {
         return sendSessionManagementRequest(appKey, sessionToken, SESSION_KEEPALIVE_URL);
     }
 
-    public LoginResponse logout() throws Exception {
-        checkActiveLoginSession();
-        return logout(this.loginSession.appKey, this.loginSession.sessionToken);
-    }
-
     public LoginResponse logout(String appKey, String sessionToken) throws Exception {
         checkArgumentsNonNull(appKey, sessionToken);
         LoginResponse loginResponse = sendSessionManagementRequest(appKey, sessionToken, LOGOUT_URL);
-        this.loginSession = null;
         return loginResponse;
     }
 
@@ -84,26 +75,16 @@ public class BetfairClient {
         return parseHttpResponseOrFail(response, LoginResponse.class);
     }
 
-    public EventResult[] listEvents(Filter filter) throws Exception {
-        checkActiveLoginSession();
-        return listEvents(this.loginSession.appKey, this.loginSession.sessionToken, filter);
-    }
-
     public EventResult[] listEvents(String appKey, String sessionToken, Filter filter) throws Exception {
         checkArgumentsNonNull(appKey, sessionToken, filter);
         Map<String, String> headers = defaultHeaders(appKey, sessionToken);
         RequestBody body = new RequestBody.Builder(filter).build();
-        String jsonBody = objectMapper.writeValueAsString(body);
+        String jsonBody = this.objectMapper.writeValueAsString(body);
         HttpResponse response = this.httpClient.post(LIST_EVENTS_URL, headers, jsonBody);
         return parseHttpResponseOrFail(response, EventResult[].class);
     }
 
-    private void checkActiveLoginSession(){
-        if(this.loginSession == null)
-            throw new IllegalStateException("No active login session found");
-    }
-
-    private void checkArgumentsNonNull(Object... args){
+    private void checkArgumentsNonNull(Object... args) {
         for(Object arg : args)
             if(arg == null)
                 throw new IllegalArgumentException("Invalid argument: null value not allowed");
@@ -114,7 +95,12 @@ public class BetfairClient {
         if(statusCode != 200) {
             throw new RequestFailedException("Request failed. Returned status code " + statusCode, statusCode);
         }
-        return objectMapper.readValue(httpResponse.getContent(), clazz);
+        return this.objectMapper.readValue(httpResponse.getContent(), clazz);
+    }
+
+    @Override
+    public void close() throws Exception {
+        if(this.httpClient != null) this.httpClient.close();
     }
 
     public static class Builder {
@@ -137,18 +123,7 @@ public class BetfairClient {
                 this.httpClient = ApacheComponentsHttpClient.newInstance();
             if(this.objectMapper == null)
                 this.objectMapper = new ObjectMapper();
-            return new BetfairClient(this.httpClient, this.objectMapper);
-        }
-    }
-
-    private static class LoginSession {
-
-        private final String appKey;
-        private final String sessionToken;
-
-        private LoginSession(String appKey, String sessionToken) {
-            this.appKey = appKey;
-            this.sessionToken = sessionToken;
+            return new BetfairClient(this);
         }
     }
 }

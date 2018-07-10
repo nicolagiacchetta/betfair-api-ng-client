@@ -14,12 +14,17 @@ public class StringUtils {
     }
 
     public static String toString(InputStream inputStream, String encoding) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
+        try(ByteArrayOutputStream result = new ByteArrayOutputStream()){
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            return result.toString(encoding);
         }
-        return result.toString(encoding);
+    }
+
+    public static boolean isNullOrEmpty(String s) {
+        return (s == null || s.isEmpty());
     }
 }

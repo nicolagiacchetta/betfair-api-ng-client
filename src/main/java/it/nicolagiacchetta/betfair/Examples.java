@@ -19,29 +19,26 @@ public class Examples {
         Date now = new Date();
         Date tomorrow = new Date(now.getTime() + 86400000);
 
-
         // Build the BetfairClient
-        BetfairClient betfairClient = new BetfairClient.Builder().build();
+        try(BetfairClient betfairClient = new BetfairClient.Builder().build()) {
+
+            // Login and obtain a session token
+            LoginResponse loginResponse = betfairClient.login(username, password, appKey);
+            String sessionToken = loginResponse.getToken();
+
+            // Refresh the Session Token
+            betfairClient.keepAliveSession(appKey, sessionToken);
 
 
-        // Login and obtain a session token
-        LoginResponse loginResponse = betfairClient.login(username, password, appKey);
+            // List all the events of the event type id '1' happening in the next 24 hours
+            Filter filter = new Filter.Builder()
+                                      .withEventTypeIds(new int[]{1})
+                                      .withMarketStartTime(new MarketStartTime(now, tomorrow))
+                                      .build();
 
+            EventResult[] events = betfairClient.listEvents(appKey, sessionToken, filter);
 
-        // Refresh the Session Token
-        betfairClient.keepAliveSession();
-
-
-        // List all the events of the event type id '1' happening in the next 24 hours
-        Filter filter = new Filter.Builder().withEventTypeIds(new int[]{1})
-                                            .withMarketStartTime(new MarketStartTime(now, tomorrow))
-                                            .build();
-
-        EventResult[] events = betfairClient.listEvents(filter);
-
-
-        // Logout
-        betfairClient.logout();
+            betfairClient.logout(appKey, sessionToken);
+        }
     }
-
 }
