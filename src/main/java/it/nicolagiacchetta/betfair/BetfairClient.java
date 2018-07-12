@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -46,10 +47,7 @@ public class BetfairClient implements AutoCloseable {
 
     public LoginResponse login(String username, String password, String appKey) throws Exception {
         checkArgumentsNonNull(username, password, appKey);
-        Map<String, String> queryParams = new HashMap<>();
-        queryParams.put(USERNAME_PARAM, username);
-        queryParams.put(PASSWORD_PARAM, password);
-        String uri = HttpUtils.appendQueryString(LOGIN_URL, queryParams);
+        String uri = appendCredentialsToUri(LOGIN_URL, username, password);
         LoginResponse loginResponse = sendSessionManagementRequest(appKey, uri);
         return loginResponse;
     }
@@ -63,6 +61,13 @@ public class BetfairClient implements AutoCloseable {
         checkArgumentsNonNull(appKey, sessionToken);
         LoginResponse loginResponse = sendSessionManagementRequest(appKey, sessionToken, LOGOUT_URL);
         return loginResponse;
+    }
+
+    private String appendCredentialsToUri(String uri, String username, String password) throws URISyntaxException {
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put(USERNAME_PARAM, username);
+        queryParams.put(PASSWORD_PARAM, password);
+        return HttpUtils.appendQueryString(uri, queryParams);
     }
 
     private LoginResponse sendSessionManagementRequest(String appKey, String url) throws Exception {
