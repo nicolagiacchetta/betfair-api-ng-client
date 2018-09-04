@@ -1,4 +1,6 @@
 # Betfair Exchange API-NG Java Client
+[![Build Status](https://travis-ci.org/nicolagiacchetta/betfair-api-ng-client.svg?branch=master)](https://travis-ci.org/nicolagiacchetta/betfair-api-ng-client)
+
 A Java Client to help the implementation of applications and bots that interact with the Betfair Exchange API-NG described [here](http://docs.developer.betfair.com/docs/).
 
 ## Getting started
