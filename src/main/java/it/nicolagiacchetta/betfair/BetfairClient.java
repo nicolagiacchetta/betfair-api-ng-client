@@ -83,21 +83,24 @@ public class BetfairClient implements AutoCloseable {
     }
 
     public EventResult[] listEvents(String appKey, String sessionToken, Filter filter) throws Exception {
-        checkArgumentsNonNull(appKey, sessionToken, filter);
-        Map<String, String> headers = defaultHeaders(appKey, sessionToken);
-        RequestBody body = new RequestBody.Builder(filter).build();
-        String jsonBody = this.objectMapper.writeValueAsString(body);
-        HttpResponse response = this.httpClient.post(LIST_EVENTS_URL, headers, jsonBody);
-        return parseHttpResponseOrFail(response, EventResult[].class);
+        return sendRequestWithFilter(LIST_EVENTS_URL, EventResult[].class, appKey, sessionToken, filter);
     }
 
     public EventTypeResult[] listEventTypes(String appKey, String sessionToken, Filter filter) throws Exception {
+        return sendRequestWithFilter(LIST_EVENT_TYPES_URL, EventTypeResult[].class, appKey, sessionToken, filter);
+    }
+
+    private <R> R sendRequestWithFilter(String url,
+                                        Class<R> returnType,
+                                        String appKey,
+                                        String sessionToken,
+                                        Filter filter) throws Exception {
         checkArgumentsNonNull(appKey, sessionToken, filter);
         Map<String, String> headers = defaultHeaders(appKey, sessionToken);
         RequestBody body = new RequestBody.Builder(filter).build();
         String jsonBody = this.objectMapper.writeValueAsString(body);
-        HttpResponse response = this.httpClient.post(LIST_EVENT_TYPES_URL, headers, jsonBody);
-        return parseHttpResponseOrFail(response, EventTypeResult[].class);
+        HttpResponse response = this.httpClient.post(url, headers, jsonBody);
+        return parseHttpResponseOrFail(response, returnType);
     }
 
     private void checkArgumentsNonNull(Object... args) {
