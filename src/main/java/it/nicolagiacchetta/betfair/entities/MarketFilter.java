@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class Filter {
+public class MarketFilter {
 
     @JsonProperty
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -16,15 +16,21 @@ public class Filter {
 
     @JsonProperty
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String[] marketCountries;
+
+    @JsonProperty
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private int[] competitionIds;
 
     @JsonProperty
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private MarketStartTime marketStartTime;
 
-    private Filter(Builder builder) {
+
+    private MarketFilter(Builder builder) {
         this.textQuery = builder.textQuery;
         this.eventTypeIds = builder.eventTypeIds;
+        this.marketCountries = builder.marketCountries;
         this.marketStartTime = builder.marketStartTime;
         this.competitionIds = builder.competitionIds;
     }
@@ -35,6 +41,10 @@ public class Filter {
 
     public int[] getEventTypeIds() {
         return eventTypeIds;
+    }
+
+    public String[] getMarketCountries() {
+        return marketCountries;
     }
 
     public int[] getCompetitionIds() {
@@ -50,6 +60,8 @@ public class Filter {
         private String textQuery;
 
         private int[] eventTypeIds;
+
+        private String[] marketCountries;
 
         private int[] competitionIds;
 
@@ -67,6 +79,11 @@ public class Filter {
             return this;
         }
 
+        public Builder withMarketCountries(String[] marketCountries) {
+            this.marketCountries = marketCountries;
+            return this;
+        }
+
         public Builder withCompetitionIds(int[] competitionIds) {
             this.competitionIds = competitionIds;
             return this;
@@ -77,8 +94,8 @@ public class Filter {
             return this;
         }
 
-        public Filter build() {
-            return new Filter(this);
+        public MarketFilter build() {
+            return new MarketFilter(this);
         }
     }
 }

@@ -2,7 +2,7 @@ package it.nicolagiacchetta.betfair;
 
 import it.nicolagiacchetta.betfair.entities.EventResult;
 import it.nicolagiacchetta.betfair.entities.EventTypeResult;
-import it.nicolagiacchetta.betfair.entities.Filter;
+import it.nicolagiacchetta.betfair.entities.MarketFilter;
 import it.nicolagiacchetta.betfair.entities.LoginResponse;
 import it.nicolagiacchetta.betfair.entities.MarketStartTime;
 
@@ -35,19 +35,19 @@ public class Examples {
 
 
             // List all the events of the event type id '1' happening in the next 24 hours
-            Filter filter = new Filter.Builder()
+            MarketFilter marketFilter = new MarketFilter.Builder()
                                       .withEventTypeIds(new int[]{1})
                                       .withMarketStartTime(new MarketStartTime(now, tomorrow))
                                       .build();
 
-            EventResult[] events = betfairClient.listEvents(appKey, sessionToken, filter);
+            EventResult[] events = betfairClient.listEvents(appKey, sessionToken, marketFilter);
 
             // List all the event types with name 'Soccer'
-            filter = new Filter.Builder()
+            marketFilter = new MarketFilter.Builder()
                                .withTextQuery("Soccer")
                                .build();
 
-            EventTypeResult[] eventTypes = betfairClient.listEventTypes(appKey, sessionToken, filter);
+            EventTypeResult[] eventTypes = betfairClient.listEventTypes(appKey, sessionToken, marketFilter);
 
             // Logout to invalidate the session token
             betfairClient.logout(appKey, sessionToken);

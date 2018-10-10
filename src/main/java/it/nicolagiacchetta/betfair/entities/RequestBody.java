@@ -5,22 +5,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class RequestBody {
 
     @JsonProperty
-    private Filter filter;
+    private MarketFilter marketFilter;
 
     private RequestBody(Builder builder) {
-        this.filter = builder.filter;
+        this.marketFilter = builder.marketFilter;
     }
 
-    public Filter getFilter() {
-        return filter;
+    public MarketFilter getMarketFilter() {
+        return marketFilter;
     }
 
     public static class Builder {
 
-        private Filter filter;
+        private MarketFilter marketFilter;
 
-        public Builder(Filter filter) {
-            this.filter = filter;
+        public Builder(MarketFilter marketFilter) {
+            this.marketFilter = marketFilter;
         }
 
         public RequestBody build() {
