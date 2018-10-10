@@ -2,6 +2,7 @@ package it.nicolagiacchetta.betfair;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.nicolagiacchetta.betfair.entities.EventResult;
+import it.nicolagiacchetta.betfair.entities.EventTypeResult;
 import it.nicolagiacchetta.betfair.entities.Filter;
 import it.nicolagiacchetta.betfair.entities.LoginResponse;
 import it.nicolagiacchetta.betfair.entities.RequestBody;
@@ -36,6 +37,7 @@ public class BetfairClient implements AutoCloseable {
     // Betting
     public static final String BETTING_API_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";
     public static final String LIST_EVENTS_URL = BETTING_API_URL + "/listEvents/";
+    public static final String LIST_EVENT_TYPES_URL = BETTING_API_URL + "/listEventTypes/";
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -87,6 +89,15 @@ public class BetfairClient implements AutoCloseable {
         String jsonBody = this.objectMapper.writeValueAsString(body);
         HttpResponse response = this.httpClient.post(LIST_EVENTS_URL, headers, jsonBody);
         return parseHttpResponseOrFail(response, EventResult[].class);
+    }
+
+    public EventTypeResult[] listEventTypes(String appKey, String sessionToken, Filter filter) throws Exception {
+        checkArgumentsNonNull(appKey, sessionToken, filter);
+        Map<String, String> headers = defaultHeaders(appKey, sessionToken);
+        RequestBody body = new RequestBody.Builder(filter).build();
+        String jsonBody = this.objectMapper.writeValueAsString(body);
+        HttpResponse response = this.httpClient.post(LIST_EVENT_TYPES_URL, headers, jsonBody);
+        return parseHttpResponseOrFail(response, EventTypeResult[].class);
     }
 
     private void checkArgumentsNonNull(Object... args) {

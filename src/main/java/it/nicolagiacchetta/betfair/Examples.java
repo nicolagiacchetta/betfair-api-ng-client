@@ -1,6 +1,7 @@
 package it.nicolagiacchetta.betfair;
 
 import it.nicolagiacchetta.betfair.entities.EventResult;
+import it.nicolagiacchetta.betfair.entities.EventTypeResult;
 import it.nicolagiacchetta.betfair.entities.Filter;
 import it.nicolagiacchetta.betfair.entities.LoginResponse;
 import it.nicolagiacchetta.betfair.entities.MarketStartTime;
@@ -41,6 +42,12 @@ public class Examples {
 
             EventResult[] events = betfairClient.listEvents(appKey, sessionToken, filter);
 
+            // List all the event types with name 'Soccer'
+            filter = new Filter.Builder()
+                               .withTextQuery("Soccer")
+                               .build();
+
+            EventTypeResult[] eventTypes = betfairClient.listEventTypes(appKey, sessionToken, filter);
 
             // Logout to invalidate the session token
             betfairClient.logout(appKey, sessionToken);
