@@ -97,7 +97,9 @@ public class BetfairClient implements AutoCloseable {
                                         MarketFilter marketFilter) throws Exception {
         checkArgumentsNonNull(appKey, sessionToken, marketFilter);
         Map<String, String> headers = defaultHeaders(appKey, sessionToken);
-        RequestBody body = new RequestBody.Builder(marketFilter).build();
+        RequestBody body = new RequestBody.Builder()
+                                          .withMarketFilter(marketFilter)
+                                          .build();
         String jsonBody = this.objectMapper.writeValueAsString(body);
         HttpResponse response = this.httpClient.post(url, headers, jsonBody);
         return parseHttpResponseOrFail(response, returnType);
