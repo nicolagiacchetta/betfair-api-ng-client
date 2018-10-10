@@ -2,8 +2,10 @@ package it.nicolagiacchetta.betfair.entities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonInclude(JsonInclude.Include.ALWAYS)
+@JsonRootName(value = "filter")
 public class MarketFilter {
 
     @JsonProperty

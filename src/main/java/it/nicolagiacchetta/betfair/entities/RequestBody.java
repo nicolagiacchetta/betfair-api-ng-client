@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RequestBody {
 
-    @JsonProperty
+    @JsonProperty("filter")
     private MarketFilter marketFilter;
 
     private RequestBody(Builder builder) {
