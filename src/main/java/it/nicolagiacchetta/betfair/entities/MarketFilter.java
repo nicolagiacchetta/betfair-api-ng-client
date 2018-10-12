@@ -26,6 +26,10 @@ public class MarketFilter {
 
     @JsonProperty
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String[] marketTypeCodes;
+
+    @JsonProperty
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private MarketStartTime marketStartTime;
 
 
@@ -34,6 +38,7 @@ public class MarketFilter {
         this.eventTypeIds = builder.eventTypeIds;
         this.marketCountries = builder.marketCountries;
         this.marketStartTime = builder.marketStartTime;
+        this.marketTypeCodes = builder.marketTypeCodes;
         this.competitionIds = builder.competitionIds;
     }
 
@@ -53,6 +58,10 @@ public class MarketFilter {
         return competitionIds;
     }
 
+    public String[] getMarketTypeCodes() {
+        return marketTypeCodes;
+    }
+
     public MarketStartTime getMarketStartTime() {
         return marketStartTime;
     }
@@ -66,6 +75,8 @@ public class MarketFilter {
         private String[] marketCountries;
 
         private int[] competitionIds;
+
+        private String[] marketTypeCodes;
 
         private MarketStartTime marketStartTime;
 
@@ -88,6 +99,11 @@ public class MarketFilter {
 
         public Builder withCompetitionIds(int[] competitionIds) {
             this.competitionIds = competitionIds;
+            return this;
+        }
+
+        public Builder withMarketTypeCodes(String[] marketTypeCodes) {
+            this.marketTypeCodes = marketTypeCodes;
             return this;
         }
 

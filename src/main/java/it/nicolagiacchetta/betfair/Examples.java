@@ -2,6 +2,7 @@ package it.nicolagiacchetta.betfair;
 
 import it.nicolagiacchetta.betfair.entities.EventResult;
 import it.nicolagiacchetta.betfair.entities.EventTypeResult;
+import it.nicolagiacchetta.betfair.entities.MarketCatalogue;
 import it.nicolagiacchetta.betfair.entities.MarketFilter;
 import it.nicolagiacchetta.betfair.entities.LoginResponse;
 import it.nicolagiacchetta.betfair.entities.MarketStartTime;
@@ -48,6 +49,14 @@ public class Examples {
                                .build();
 
             EventTypeResult[] eventTypes = betfairClient.listEventTypes(appKey, sessionToken, marketFilter);
+
+            // List Market Catalogue for the market 'OVER_UNDER_25'
+            marketFilter = new MarketFilter.Builder()
+                    .withMarketTypeCodes(new String[]{"OVER_UNDER_25"})
+                    .build();
+
+            MarketCatalogue[] marketCatalogues = betfairClient.listMarketCatalogue(appKey, sessionToken, marketFilter, 1);
+
 
             // Logout to invalidate the session token
             betfairClient.logout(appKey, sessionToken);

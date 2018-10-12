@@ -3,8 +3,9 @@ package it.nicolagiacchetta.betfair;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.nicolagiacchetta.betfair.entities.EventResult;
 import it.nicolagiacchetta.betfair.entities.EventTypeResult;
-import it.nicolagiacchetta.betfair.entities.MarketFilter;
 import it.nicolagiacchetta.betfair.entities.LoginResponse;
+import it.nicolagiacchetta.betfair.entities.MarketCatalogue;
+import it.nicolagiacchetta.betfair.entities.MarketFilter;
 import it.nicolagiacchetta.betfair.entities.RequestBody;
 import it.nicolagiacchetta.betfair.exceptions.RequestFailedException;
 import it.nicolagiacchetta.betfair.utils.ApacheComponentsHttpClient;
@@ -38,6 +39,7 @@ public class BetfairClient implements AutoCloseable {
     public static final String BETTING_API_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";
     public static final String LIST_EVENTS_URL = BETTING_API_URL + "/listEvents/";
     public static final String LIST_EVENT_TYPES_URL = BETTING_API_URL + "/listEventTypes/";
+    public static final String LIST_MARKET_CATALOGUE_URL = BETTING_API_URL + "/listMarketCatalogue/";
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -83,22 +85,28 @@ public class BetfairClient implements AutoCloseable {
     }
 
     public EventResult[] listEvents(String appKey, String sessionToken, MarketFilter marketFilter) throws Exception {
-        return sendRequestWithFilter(LIST_EVENTS_URL, EventResult[].class, appKey, sessionToken, marketFilter);
+        return sendRequest(LIST_EVENTS_URL, EventResult[].class, appKey, sessionToken, marketFilter, null);
     }
 
     public EventTypeResult[] listEventTypes(String appKey, String sessionToken, MarketFilter marketFilter) throws Exception {
-        return sendRequestWithFilter(LIST_EVENT_TYPES_URL, EventTypeResult[].class, appKey, sessionToken, marketFilter);
+        return sendRequest(LIST_EVENT_TYPES_URL, EventTypeResult[].class, appKey, sessionToken, marketFilter, null);
     }
 
-    private <R> R sendRequestWithFilter(String url,
-                                        Class<R> returnType,
-                                        String appKey,
-                                        String sessionToken,
-                                        MarketFilter marketFilter) throws Exception {
+    public MarketCatalogue[] listMarketCatalogue(String appKey, String sessionToken, MarketFilter marketFilter, Integer maxResults) throws Exception {
+        return sendRequest(LIST_MARKET_CATALOGUE_URL, MarketCatalogue[].class, appKey, sessionToken, marketFilter, maxResults);
+    }
+
+    private <R> R sendRequest(String url,
+                              Class<R> returnType,
+                              String appKey,
+                              String sessionToken,
+                              MarketFilter marketFilter,
+                              Integer maxResults) throws Exception {
         checkArgumentsNonNull(appKey, sessionToken, marketFilter);
         Map<String, String> headers = defaultHeaders(appKey, sessionToken);
         RequestBody body = new RequestBody.Builder()
                                           .withMarketFilter(marketFilter)
+                                          .withMaxResults(maxResults)
                                           .build();
         String jsonBody = this.objectMapper.writeValueAsString(body);
         HttpResponse response = this.httpClient.post(url, headers, jsonBody);

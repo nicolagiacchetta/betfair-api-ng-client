@@ -19,6 +19,8 @@ public class BetfairUtils {
             defaultHeaders.put("X-Authentication", sessionToken);
         defaultHeaders.put("Accept", MediaType.APPLICATION_JSON);
         defaultHeaders.put("Content-Type", MediaType.APPLICATION_JSON);
+        defaultHeaders.put("Cache-control", "no-cache");
+        defaultHeaders.put("Pragma", "no-cache");
         return defaultHeaders;
     }
 }

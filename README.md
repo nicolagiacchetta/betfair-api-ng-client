@@ -41,6 +41,7 @@ The project currently supports the following operations:
 * Login & Session Management described [here](http://docs.developer.betfair.com/docs/pages/viewpage.action?pageId=3834909#Login&SessionManagement-Logout)
 * List Events (`exchange/betting/rest/v1.0/listEvents/`)
 * List Event Types (`exchange/betting/rest/v1.0/listEventTypes/`)
+* List Market Catalogue (`exchange/betting/rest/v1.0/listMarketCatalogue/`)
 
 
 ## Links and Resources 

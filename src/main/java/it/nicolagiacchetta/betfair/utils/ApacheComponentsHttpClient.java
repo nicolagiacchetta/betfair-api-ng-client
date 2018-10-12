@@ -23,7 +23,11 @@ public class ApacheComponentsHttpClient implements HttpClient {
     }
 
     public static ApacheComponentsHttpClient newInstance() {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        CloseableHttpClient httpClient = HttpClients.custom()
+                                                    .disableContentCompression()
+                                                    .build();
+
         return new ApacheComponentsHttpClient(httpClient);
     }
 
