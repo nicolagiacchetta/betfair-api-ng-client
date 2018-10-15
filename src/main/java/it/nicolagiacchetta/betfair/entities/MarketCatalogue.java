@@ -15,7 +15,7 @@ public class MarketCatalogue {
 
     @JsonProperty
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    Double totalMatched;
+    private Double totalMatched;
 
     @JsonProperty
     @JsonInclude(JsonInclude.Include.NON_NULL)

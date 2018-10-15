@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static it.nicolagiacchetta.betfair.BetfairClient.*;
+import static it.nicolagiacchetta.betfair.BetfairClientImpl.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -27,9 +27,9 @@ public class BetfairClientTest {
     public static final String SESSION_TOKEN = "+THAUrwK+pcW736SAaKBML9HPio3+W7hvf3S0y/5rwE=";
 
     private HttpClient httpClient = mock(HttpClient.class);
-    private BetfairClient betfairClient = BetfairClient.builder()
-                                                       .withHttpClient(httpClient)
-                                                       .build();
+    private BetfairClient betfairClient = BetfairClients.custom()
+                                                        .withHttpClient(httpClient)
+                                                        .build();
 
     @Test
     public void login() throws Exception {

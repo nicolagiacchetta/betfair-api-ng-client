@@ -6,6 +6,7 @@ import it.nicolagiacchetta.betfair.entities.MarketCatalogue;
 import it.nicolagiacchetta.betfair.entities.MarketFilter;
 import it.nicolagiacchetta.betfair.entities.LoginResponse;
 import it.nicolagiacchetta.betfair.entities.MarketStartTime;
+import it.nicolagiacchetta.betfair.entities.MarketType;
 
 import java.util.Date;
 
@@ -22,8 +23,8 @@ public class Examples {
         Date tomorrow = new Date(now.getTime() + 86400000);
 
 
-        // Build the BetfairClient
-        try(BetfairClient betfairClient = BetfairClient.builder().build()) {
+        // Build the BetfairClientImpl
+        try(BetfairClient betfairClient = BetfairClients.createDefault()) {
 
 
             // Login and obtain a session token
@@ -49,6 +50,8 @@ public class Examples {
                                .build();
 
             EventTypeResult[] eventTypes = betfairClient.listEventTypes(appKey, sessionToken, marketFilter);
+
+            MarketType[] marketTypes = betfairClient.listMarketTypes(appKey, sessionToken, marketFilter);
 
             // List Market Catalogue for the market 'OVER_UNDER_25'
             marketFilter = new MarketFilter.Builder()

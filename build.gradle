@@ -33,6 +33,18 @@ dependencies {
     testCompile "org.mockito:mockito-core:$versionMockitoCore"
 }
 
+compileJava {
+    // This only works when forking and passing 'javac' as an executable
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    // This only works when forking and passing 'javac' as an executable
+    options.compilerArgs << '-parameters'
+
+}
+
+
 task publish(type: Copy) {
     from(libsDir)
     into("./")
