@@ -25,7 +25,7 @@ BetfairClient betfairClient = BetfairClients.createDefault();
 
 Building an instance of the `BetfairClient` in this way will imply the creation of a `it.nicolagiacchetta.betfair.utils.HttpClient` and of a `com.fasterxml.jackson.databind.ObjectMapper`. For this reason, it is recommended that the same instance of the `BetfairClient` is reused for multiple request executions, ideally throughout all the application lifecycle. 
 
-It is also possible to retrieve via the `BetfairClients.custom()` method a `BetfairClientBuilder`. It is highly discouraged to provide custom implementations of the `it.nicolagiacchetta.betfair.utils.HttpClient` and a `com.fasterxml.jackson.databind.ObjectMapper`. In particular before reusing your application `com.fasterxml.jackson.databind.ObjectMapper`, be sure that its custom configuration does not break the compatibility with the JSON format expected by the Betfair Exchange API-NG. 
+It is also possible to retrieve via the `BetfairClients.custom()` method a `BetfairClientBuilder`. Although permitted, it is highly discouraged to provide custom implementations of the `it.nicolagiacchetta.betfair.utils.HttpClient` and a `com.fasterxml.jackson.databind.ObjectMapper`. In particular before reusing your application `com.fasterxml.jackson.databind.ObjectMapper`, be sure that its custom configuration does not break the compatibility with the JSON format expected by the Betfair Exchange API-NG. 
 
 When an instance of the `BetfairClient` is no longer needed and is about to go out of scope, it must be explictly shut down by calling the `BetfairClient#close()` method. 
 
