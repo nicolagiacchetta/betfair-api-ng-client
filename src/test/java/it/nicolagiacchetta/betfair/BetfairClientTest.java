@@ -12,7 +12,9 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static it.nicolagiacchetta.betfair.BetfairClientImpl.*;
+import static it.nicolagiacchetta.betfair.BetfairClientImpl.LOGIN_URL;
+import static it.nicolagiacchetta.betfair.BetfairClientImpl.PASSWORD_PARAM;
+import static it.nicolagiacchetta.betfair.BetfairClientImpl.USERNAME_PARAM;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -39,6 +41,36 @@ public class BetfairClientTest {
     @Test
     public void loginWrongCredentials() throws Exception {
         testLoginWith(USERNAME, WRONG_PASSWORD, "", API_KEY, LoginStatus.FAIL, "INVALID_USERNAME_OR_PASSWORD");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void loginEmptyUsername() throws Exception {
+        this.betfairClient.login("", PASSWORD, API_KEY);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void loginNullUsername() throws Exception {
+        this.betfairClient.login(null, PASSWORD, API_KEY);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void loginEmptyPassword() throws Exception {
+        this.betfairClient.login(USERNAME, "", API_KEY);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void loginNullPassword() throws Exception {
+        this.betfairClient.login(USERNAME, null, API_KEY);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void loginNullApikey() throws Exception {
+        this.betfairClient.login(USERNAME, PASSWORD, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void loginEmptyApikey() throws Exception {
+        this.betfairClient.login(USERNAME, PASSWORD, "");
     }
 
     private void testLoginWith(String username,
